@@ -49,8 +49,6 @@
       true,
       "debug",
       "info",
-      "time",
-      "timeEnd",
       "trace"
     ],
     "no-construct": true,

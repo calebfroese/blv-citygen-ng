@@ -29,6 +29,23 @@ export class AppComponent implements OnInit {
     this.sizeY = height / this.screenTileAmount;
     this.offsetX = (this.screenTileAmount / 2) * this.sizeX;
     this.offsetY = (this.screenTileAmount / 2) * this.sizeY;
+    this.generate();
+  }
+
+  clear() {
+    this.ctx.beginPath();
+    this.ctx.fillStyle = '#fff';
+    this.ctx.clearRect(
+      0,
+      0,
+      this.canvasRef.nativeElement.width,
+      this.canvasRef.nativeElement.height
+    );
+    this.ctx.fillStyle = '#000';
+  }
+
+  generate() {
+    this.clear();
     const tiles = this.roadManager.start();
     this.ctx.fillRect(this.offsetX, this.offsetY, this.sizeX, this.sizeY);
     tiles.forEach(({ x, y }) => {

@@ -22,7 +22,7 @@ export class Road {
   ) {
     this.lastDirectionChangeAtLength = this.length;
     this.directionalBias = 0.9;
-    this.forkChance = 0.15;
+    this.forkChance = 0.3;
   }
 
   getForward() {
@@ -104,7 +104,7 @@ export class Road {
 
     // Has this road reached its last tick?
     this.length++;
-    if (this.length >= 50) {
+    if (this.length >= 20) {
       this.done = true;
     }
 
@@ -130,7 +130,9 @@ export class RoadManager {
       new Road(0, 0, Direction.WEST)
     ];
     this.tiles = [];
+    console.time('roadGenTime');
     this.tick();
+    console.timeEnd('roadGenTime');
     return this.tiles;
   }
 

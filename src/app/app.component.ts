@@ -1,4 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { RoadManager } from './road';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,8 @@ export class AppComponent implements OnInit {
   @ViewChild('canvas') canvasRef: ElementRef;
   ctx: CanvasRenderingContext2D;
 
+  constructor(public roadManager: RoadManager) {}
+
   ngOnInit() {
     this.ctx = this.canvasRef.nativeElement.getContext('2d');
     // assuming an equal width and height
@@ -26,8 +29,10 @@ export class AppComponent implements OnInit {
     this.sizeY = height / this.screenTileAmount;
     this.offsetX = (this.screenTileAmount / 2) * this.sizeX;
     this.offsetY = (this.screenTileAmount / 2) * this.sizeY;
-
-    this.tileAt(0, 0);
+    const tiles = this.roadManager.start();
+    tiles.forEach(({x, y}) => {
+      this.tileAt(x, y);
+    });
     this.draw();
   }
 

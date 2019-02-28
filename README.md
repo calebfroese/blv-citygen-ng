@@ -1,4 +1,6 @@
-# BlvCitygenNg
+# Boulevard City Generator Prototype
+
+The Boulevard City Generator web app is a fast way of prototying the road generation for the upcoming Boulevard game.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.0.6.
 

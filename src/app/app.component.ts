@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   offsetX;
   offsetY;
   // How many tiles to fit in the screen vertically and horizontally
-  screenTileAmount = 50;
+  screenTileAmount = 100;
 
   @ViewChild('canvas') canvasRef: ElementRef;
   ctx: CanvasRenderingContext2D;

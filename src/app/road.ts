@@ -65,7 +65,7 @@ export class Road {
 
   build() {
     this.length++;
-    if (this.length >= 24) {
+    if (this.length >= 50) {
       return null;
     }
 

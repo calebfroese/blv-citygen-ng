@@ -12,6 +12,8 @@ export class Road {
   forkChance: number; // between 0 and 1
   lastDirectionChangeAtLength = 0;
 
+  done: boolean;
+
   constructor(
     public x: number,
     public y: number,
@@ -19,7 +21,7 @@ export class Road {
     public length: number = 0
   ) {
     this.directionalBias = 0.9;
-    this.forkChance = 0.2;
+    this.forkChance = 0;
   }
 
   getForward() {
@@ -39,13 +41,13 @@ export class Road {
     // make a left turn
     switch (this.bias) {
       case Direction.NORTH:
-        return { x: this.x - 1, y: this.y };
+        return { x: this.x - 1, y: this.y, bias: Direction.WEST };
       case Direction.EAST:
-        return { x: this.x, y: this.y + 1 };
+        return { x: this.x, y: this.y + 1, bias: Direction.NORTH };
       case Direction.SOUTH:
-        return { x: this.x + 1, y: this.y };
+        return { x: this.x + 1, y: this.y, bias: Direction.EAST };
       case Direction.WEST:
-        return { x: this.x, y: this.y - 1 };
+        return { x: this.x, y: this.y - 1, bias: Direction.SOUTH };
     }
   }
 
@@ -53,21 +55,18 @@ export class Road {
     // make a right turn
     switch (this.bias) {
       case Direction.NORTH:
-        return { x: this.x + 1, y: this.y };
+        return { x: this.x + 1, y: this.y, bias: Direction.EAST };
       case Direction.EAST:
-        return { x: this.x, y: this.y - 1 };
+        return { x: this.x, y: this.y - 1, bias: Direction.SOUTH };
       case Direction.SOUTH:
-        return { x: this.x - 1, y: this.y };
+        return { x: this.x - 1, y: this.y, bias: Direction.WEST };
       case Direction.WEST:
-        return { x: this.x, y: this.y + 1 };
+        return { x: this.x, y: this.y + 1, bias: Direction.NORTH };
     }
   }
 
   build() {
-    this.length++;
-    if (this.length >= 50) {
-      return null;
-    }
+    let forked = null;
 
     // Calculate what direction the road will build in
     // Will the road continue to build in its biased direction?
@@ -81,46 +80,72 @@ export class Road {
       this.y = y;
     } else {
       this.lastDirectionChangeAtLength = this.length;
+      // Should we fork?
+      const shouldFork = Math.random() < this.forkChance;
+      if (shouldFork) {
+        const { x, y } = this.getForward();
+        forked = new Road(x, y, this.bias, this.length);
+      }
+
       // Should we move to the left or the right?
       const moveToLeft = Math.random() > 0.5;
       if (moveToLeft) {
-        const { x, y } = this.getLeft();
+        const { x, y, bias } = this.getLeft();
         this.x = x;
         this.y = y;
+        this.bias = bias;
       } else {
-        const { x, y } = this.getRight();
+        const { x, y, bias } = this.getRight();
         this.x = x;
         this.y = y;
+        this.bias = bias;
       }
+    }
+
+    // Has this road reached its last tick?
+    this.length++;
+    if (this.length >= 50) {
+      this.done = true;
     }
 
     // Return the value
     return {
       x: this.x,
       y: this.y,
-      forked: null
+      forked
     };
   }
 }
 
 @Injectable()
 export class RoadManager {
+  ticking: Road[];
+  tiles: any[];
+
   start() {
-    const tiles = [];
+    this.ticking = [new Road(0, 0, Direction.NORTH)];
+    this.tiles = [];
+    this.tick();
+    return this.tiles;
+  }
 
-    let ticking: Road[] = [new Road(0, 0, Direction.NORTH)];
-    while (ticking.length) {
-      // Tick on each of the roads
-      ticking = ticking.filter(road => {
-        const returned = road.build();
-        if (!returned) {
-          return false;
-        }
-        tiles.push({ x: returned.x, y: returned.y });
-        return true;
-      });
+  tick() {
+    this.ticking.forEach(road => {
+      if (road.done === true) {
+        return;
+      }
+      const returned = road.build();
+      if (returned.forked) {
+        this.ticking.push(returned.forked);
+      }
+      this.tiles.push({ x: returned.x, y: returned.y });
+      return true;
+    });
+
+    // Continue the tick
+    const stillTicking = this.ticking.filter(road => !road.done).length;
+    if (stillTicking > 0) {
+      this.tick();
     }
-
-    return tiles;
   }
 }

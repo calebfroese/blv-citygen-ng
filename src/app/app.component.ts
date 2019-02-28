@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   offsetX;
   offsetY;
   // How many tiles to fit in the screen vertically and horizontally
-  screenTileAmount = 100;
+  screenTileAmount = 80;
 
   @ViewChild('canvas') canvasRef: ElementRef;
   ctx: CanvasRenderingContext2D;
@@ -30,7 +30,8 @@ export class AppComponent implements OnInit {
     this.offsetX = (this.screenTileAmount / 2) * this.sizeX;
     this.offsetY = (this.screenTileAmount / 2) * this.sizeY;
     const tiles = this.roadManager.start();
-    tiles.forEach(({x, y}) => {
+    this.ctx.fillRect(this.offsetX, this.offsetY, this.sizeX, this.sizeY);
+    tiles.forEach(({ x, y }) => {
       this.tileAt(x, y);
     });
     this.draw();

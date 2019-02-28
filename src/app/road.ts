@@ -21,17 +21,17 @@ export class Road {
     public length: number = 0
   ) {
     this.directionalBias = 0.9;
-    this.forkChance = 0;
+    this.forkChance = 0.15;
   }
 
   getForward() {
     switch (this.bias) {
       case Direction.NORTH:
-        return { x: this.x, y: this.y + 1 };
+        return { x: this.x, y: this.y - 1 };
       case Direction.EAST:
         return { x: this.x + 1, y: this.y };
       case Direction.SOUTH:
-        return { x: this.x, y: this.y - 1 };
+        return { x: this.x, y: this.y + 1 };
       case Direction.WEST:
         return { x: this.x - 1, y: this.y };
     }
@@ -43,11 +43,11 @@ export class Road {
       case Direction.NORTH:
         return { x: this.x - 1, y: this.y, bias: Direction.WEST };
       case Direction.EAST:
-        return { x: this.x, y: this.y + 1, bias: Direction.NORTH };
+        return { x: this.x, y: this.y - 1, bias: Direction.NORTH };
       case Direction.SOUTH:
         return { x: this.x + 1, y: this.y, bias: Direction.EAST };
       case Direction.WEST:
-        return { x: this.x, y: this.y - 1, bias: Direction.SOUTH };
+        return { x: this.x, y: this.y + 1, bias: Direction.SOUTH };
     }
   }
 
@@ -57,11 +57,11 @@ export class Road {
       case Direction.NORTH:
         return { x: this.x + 1, y: this.y, bias: Direction.EAST };
       case Direction.EAST:
-        return { x: this.x, y: this.y - 1, bias: Direction.SOUTH };
+        return { x: this.x, y: this.y + 1, bias: Direction.SOUTH };
       case Direction.SOUTH:
         return { x: this.x - 1, y: this.y, bias: Direction.WEST };
       case Direction.WEST:
-        return { x: this.x, y: this.y + 1, bias: Direction.NORTH };
+        return { x: this.x, y: this.y - 1, bias: Direction.NORTH };
     }
   }
 
@@ -83,8 +83,7 @@ export class Road {
       // Should we fork?
       const shouldFork = Math.random() < this.forkChance;
       if (shouldFork) {
-        const { x, y } = this.getForward();
-        forked = new Road(x, y, this.bias, this.length);
+        forked = new Road(this.x, this.y, this.bias, this.length);
       }
 
       // Should we move to the left or the right?
@@ -123,7 +122,12 @@ export class RoadManager {
   tiles: any[];
 
   start() {
-    this.ticking = [new Road(0, 0, Direction.NORTH)];
+    this.ticking = [
+        new Road(0, 0, Direction.NORTH),
+        new Road(0, 0, Direction.EAST),
+        new Road(0, 0, Direction.SOUTH),
+        new Road(0, 0, Direction.WEST),
+    ];
     this.tiles = [];
     this.tick();
     return this.tiles;

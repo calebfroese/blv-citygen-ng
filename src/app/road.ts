@@ -8,11 +8,18 @@ export enum Direction {
 }
 
 export class Road {
-  length = 0;
-  biasStrength: number; // between 0 and 1
+  directionalBias: number; // between 0 and 1
+  forkChance: number; // between 0 and 1
+  lastDirectionChangeAtLength = 0;
 
-  constructor(public x: number, public y: number, public bias: Direction) {
-    this.biasStrength = 0.9;
+  constructor(
+    public x: number,
+    public y: number,
+    public bias: Direction,
+    public length: number = 0
+  ) {
+    this.directionalBias = 0.9;
+    this.forkChance = 0.2;
   }
 
   getForward() {
@@ -64,12 +71,16 @@ export class Road {
 
     // Calculate what direction the road will build in
     // Will the road continue to build in its biased direction?
-    const continueInBiasedDir = Math.random() < this.biasStrength;
+    const mustGoStraight = this.length <= this.lastDirectionChangeAtLength + 4;
+    const continueInBiasedDir =
+      mustGoStraight || Math.random() < this.directionalBias;
+
     if (continueInBiasedDir) {
       const { x, y } = this.getForward();
       this.x = x;
       this.y = y;
     } else {
+      this.lastDirectionChangeAtLength = this.length;
       // Should we move to the left or the right?
       const moveToLeft = Math.random() > 0.5;
       if (moveToLeft) {

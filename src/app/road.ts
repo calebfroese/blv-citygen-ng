@@ -10,7 +10,7 @@ export enum Direction {
 export class Road {
   directionalBias: number; // between 0 and 1
   forkChance: number; // between 0 and 1
-  lastDirectionChangeAtLength = 0;
+  lastDirectionChangeAtLength;
 
   done: boolean;
 
@@ -20,6 +20,7 @@ export class Road {
     public bias: Direction,
     public length: number = 0
   ) {
+    this.lastDirectionChangeAtLength = this.length;
     this.directionalBias = 0.9;
     this.forkChance = 0.15;
   }
@@ -123,10 +124,10 @@ export class RoadManager {
 
   start() {
     this.ticking = [
-        new Road(0, 0, Direction.NORTH),
-        new Road(0, 0, Direction.EAST),
-        new Road(0, 0, Direction.SOUTH),
-        new Road(0, 0, Direction.WEST),
+      new Road(0, 0, Direction.NORTH),
+      new Road(0, 0, Direction.EAST),
+      new Road(0, 0, Direction.SOUTH),
+      new Road(0, 0, Direction.WEST)
     ];
     this.tiles = [];
     this.tick();

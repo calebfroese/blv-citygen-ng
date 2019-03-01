@@ -31,24 +31,17 @@ export class Road {
 
     if (continueInBiasedDir) {
       const { x, y } = getForward(this.x, this.y, this.bias);
-      const canMoveForward = !this.managerRef.tileExists(this.x, this.y, this.bias);
+      const canMoveForward = !this.managerRef.tileExists(
+        this.x,
+        this.y,
+        this.bias
+      );
       if (canMoveForward) {
         this.x = x;
         this.y = y;
       }
     } else {
       this.lastDirectionChangeAtLength = this.length;
-      // Should we fork?
-      const shouldFork = Math.random() < this.forkChance;
-      if (shouldFork) {
-        forked = new Road(
-          this.x,
-          this.y,
-          this.bias,
-          this.managerRef,
-          this.length
-        );
-      }
 
       // Can I move to the left/right?
       const left = getLeft(this.x, this.y, this.bias);
@@ -67,11 +60,13 @@ export class Road {
       // Should we move to the left or the right?
       const moveToLeft = Math.random() > 0.5;
       if (moveToLeft && canMoveLeft) {
+        forked = this.generateFork();
         const { x, y, bias } = getLeft(this.x, this.y, this.bias);
         this.x = x;
         this.y = y;
         this.bias = bias;
-      } else if (canMoveRight) {
+      } else if (!moveToLeft && canMoveRight) {
+        forked = this.generateFork();
         const { x, y, bias } = getRight(this.x, this.y, this.bias);
         this.x = x;
         this.y = y;
@@ -91,5 +86,13 @@ export class Road {
       y: this.y,
       forked
     };
+  }
+
+  generateFork() {
+    // Should we fork?
+    const shouldFork = Math.random() < this.forkChance;
+    if (shouldFork) {
+      return new Road(this.x, this.y, this.bias, this.managerRef, this.length);
+    }
   }
 }

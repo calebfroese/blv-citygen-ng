@@ -1,1 +1,5 @@
-<canvas (click)="clickEvent($event.clientX, $event.clientY)" #canvas width="800" height="800"></canvas>
+<h1>Boulevard Citygen Prototying</h1>
+<p>Click a coordinate on the map to generate a heap at click location.</p>
+<button (click)="restart()">Restart</button>
+<br />
+<canvas (click)="clickEvent($event.offsetX, $event.offsetY)" #canvas width="800" height="800"></canvas>

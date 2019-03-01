@@ -101,12 +101,18 @@ export class Road {
     // Should we fork?
     const shouldFork = Math.random() < this.forkChance;
     if (shouldFork) {
+      // Should the fork add more length than its parent
+      // This prevents the diamond shape and adds more natural overall shape
+      const additionalLength = Math.ceil(
+        Math.random() * this.minStraightLength
+      );
+      const forkLength = this.length - additionalLength;
       return new Road(
         this.x,
         this.y,
         this.bias,
         this.managerRef,
-        this.length,
+        forkLength,
         this.forkNumber + 1
       );
     }

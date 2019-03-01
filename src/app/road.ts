@@ -13,15 +13,23 @@ export class Road {
     public y: number,
     public bias: Direction,
     public managerRef: any,
-    public length: number = 0
+    public length: number = 0,
+    public forkNumber: number = 0
   ) {
     this.lastDirectionChangeAtLength = this.length;
     this.directionalBias = 0.7;
-    this.forkChance = 0.3;
+    this.forkChance = 0;
   }
 
   build() {
     let forked = null;
+
+    // Has this road reached its last tick?
+    this.length++;
+    if (this.length >= 20) {
+      this.done = true;
+      return;
+    }
 
     // Calculate what direction the road will build in
     // Will the road continue to build in its biased direction?
@@ -36,7 +44,9 @@ export class Road {
         this.y,
         this.bias
       );
-      if (canMoveForward) {
+      if (!canMoveForward) {
+        return;
+      } else {
         this.x = x;
         this.y = y;
       }
@@ -71,13 +81,9 @@ export class Road {
         this.x = x;
         this.y = y;
         this.bias = bias;
+      } else {
+        return;
       }
-    }
-
-    // Has this road reached its last tick?
-    this.length++;
-    if (this.length >= 20) {
-      this.done = true;
     }
 
     // Return the value
@@ -92,7 +98,14 @@ export class Road {
     // Should we fork?
     const shouldFork = Math.random() < this.forkChance;
     if (shouldFork) {
-      return new Road(this.x, this.y, this.bias, this.managerRef, this.length);
+      return new Road(
+        this.x,
+        this.y,
+        this.bias,
+        this.managerRef,
+        this.length,
+        this.forkNumber + 1
+      );
     }
   }
 }

@@ -43,16 +43,18 @@ export class RoadManager {
 
   tick() {
     this.ticking.forEach(road => {
-      if (road.done === true) {
+      if (road.done) {
         return;
       }
       const returned = road.build();
+      if (!returned) {
+        return;
+      }
       if (returned.forked) {
         this.ticking.push(returned.forked);
       }
       this.tilesIndexed.push(`${returned.x},${returned.y}`);
       this.tiles.push({ x: returned.x, y: returned.y });
-      return true;
     });
 
     // Continue the tick

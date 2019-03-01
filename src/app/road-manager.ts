@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Road } from './road';
 import { Direction } from './shared';
+import { getForward, getLeft, getRight } from './direction-util';
 
 @Injectable()
 export class RoadManager {
@@ -23,8 +24,21 @@ export class RoadManager {
     return this.tiles;
   }
 
-  tileExists(x: number, y: number) {
-    return this.tilesIndexed.includes(`${x},${y}`);
+  tileExists(x: number, y: number, bias: Direction) {
+    /**
+     * Check if there is a tile:
+     * - In those coordinates
+     * - Forward and left of the coords
+     * - Forward and right of the coords
+     */
+    const forward = getForward(x, y, bias);
+    const forwardLeft = getLeft(forward.x, forward.y, bias);
+    const forwardRight = getRight(forward.x, forward.y, bias);
+    return (
+      this.tilesIndexed.includes(`${forward.x},${forward.y}`) ||
+      this.tilesIndexed.includes(`${forwardLeft.x},${forwardLeft.y}`) ||
+      this.tilesIndexed.includes(`${forwardRight.x},${forwardRight.y}`)
+    );
   }
 
   tick() {

@@ -31,8 +31,11 @@ export class Road {
 
     if (continueInBiasedDir) {
       const { x, y } = getForward(this.x, this.y, this.bias);
-      this.x = x;
-      this.y = y;
+      const canMoveForward = !this.managerRef.tileExists(this.x, this.y, this.bias);
+      if (canMoveForward) {
+        this.x = x;
+        this.y = y;
+      }
     } else {
       this.lastDirectionChangeAtLength = this.length;
       // Should we fork?
@@ -50,8 +53,16 @@ export class Road {
       // Can I move to the left/right?
       const left = getLeft(this.x, this.y, this.bias);
       const right = getRight(this.x, this.y, this.bias);
-      const canMoveLeft = !this.managerRef.tileExists(left.x, left.y);
-      const canMoveRight = !this.managerRef.tileExists(right.x, right.y);
+      const canMoveLeft = !this.managerRef.tileExists(
+        left.x,
+        left.y,
+        this.bias
+      );
+      const canMoveRight = !this.managerRef.tileExists(
+        right.x,
+        right.y,
+        this.bias
+      );
 
       // Should we move to the left or the right?
       const moveToLeft = Math.random() > 0.5;

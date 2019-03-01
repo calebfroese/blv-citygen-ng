@@ -17,8 +17,8 @@ export class Road {
     public forkNumber: number = 0
   ) {
     this.lastDirectionChangeAtLength = this.length;
-    this.directionalBias = 0.7;
-    this.forkChance = 0;
+    this.directionalBias = 0.8;
+    this.forkChance = 0.3;
   }
 
   build() {
@@ -33,7 +33,7 @@ export class Road {
 
     // Calculate what direction the road will build in
     // Will the road continue to build in its biased direction?
-    const mustGoStraight = this.length <= this.lastDirectionChangeAtLength + 4;
+    const mustGoStraight = this.length <= this.lastDirectionChangeAtLength + 3;
     const continueInBiasedDir =
       mustGoStraight || Math.random() < this.directionalBias;
 

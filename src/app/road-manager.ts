@@ -6,18 +6,18 @@ import { getForward, getLeft, getRight } from './direction-util';
 @Injectable()
 export class RoadManager {
   ticking: Road[];
-  tilesIndexed: string[]; // indexed `${x},${y}` for finding if tiles exist
-  tiles: any[];
+  tilesIndexed: string[] = []; // indexed `${x},${y}` for finding if tiles exist
+  tiles: any[] = [];
 
-  start() {
+  start(x, y) {
+    console.log('cleared tiles');
+    // this.tiles = [];
     this.ticking = [
-      new Road(0, 0, Direction.NORTH, this),
-      new Road(0, 0, Direction.EAST, this),
-      new Road(0, 0, Direction.SOUTH, this),
-      new Road(0, 0, Direction.WEST, this)
+      new Road(x, y, Direction.NORTH, this),
+      new Road(x, y, Direction.EAST, this),
+      new Road(x, y, Direction.SOUTH, this),
+      new Road(x, y, Direction.WEST, this)
     ];
-    this.tiles = [];
-    this.tilesIndexed = [];
     console.time('roadGenTime');
     this.tick();
     console.timeEnd('roadGenTime');

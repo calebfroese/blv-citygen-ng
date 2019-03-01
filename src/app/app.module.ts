@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { RoadManager } from './road';
+import { RoadManager } from './road-manager';
 
 @NgModule({
   declarations: [

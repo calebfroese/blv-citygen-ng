@@ -1,11 +1,5 @@
 import { Injectable } from '@angular/core';
-
-export enum Direction {
-  NORTH,
-  EAST,
-  SOUTH,
-  WEST
-}
+import { Direction } from './shared';
 
 export class Road {
   directionalBias: number; // between 0 and 1
@@ -21,7 +15,7 @@ export class Road {
     public length: number = 0
   ) {
     this.lastDirectionChangeAtLength = this.length;
-    this.directionalBias = 0.9;
+    this.directionalBias = 0.7;
     this.forkChance = 0.3;
   }
 
@@ -114,45 +108,5 @@ export class Road {
       y: this.y,
       forked
     };
-  }
-}
-
-@Injectable()
-export class RoadManager {
-  ticking: Road[];
-  tiles: any[];
-
-  start() {
-    this.ticking = [
-      new Road(0, 0, Direction.NORTH),
-      new Road(0, 0, Direction.EAST),
-      new Road(0, 0, Direction.SOUTH),
-      new Road(0, 0, Direction.WEST)
-    ];
-    this.tiles = [];
-    console.time('roadGenTime');
-    this.tick();
-    console.timeEnd('roadGenTime');
-    return this.tiles;
-  }
-
-  tick() {
-    this.ticking.forEach(road => {
-      if (road.done === true) {
-        return;
-      }
-      const returned = road.build();
-      if (returned.forked) {
-        this.ticking.push(returned.forked);
-      }
-      this.tiles.push({ x: returned.x, y: returned.y });
-      return true;
-    });
-
-    // Continue the tick
-    const stillTicking = this.ticking.filter(road => !road.done).length;
-    if (stillTicking > 0) {
-      this.tick();
-    }
   }
 }

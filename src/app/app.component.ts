@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { RoadManager } from './road';
+import { RoadManager } from './road-manager';
 
 @Component({
   selector: 'app-root',

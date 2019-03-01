@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { getForward, getLeft, getRight } from './direction-util';
 import { Direction } from './shared';
 
 export class Road {
@@ -19,47 +19,6 @@ export class Road {
     this.forkChance = 0.3;
   }
 
-  getForward() {
-    switch (this.bias) {
-      case Direction.NORTH:
-        return { x: this.x, y: this.y - 1 };
-      case Direction.EAST:
-        return { x: this.x + 1, y: this.y };
-      case Direction.SOUTH:
-        return { x: this.x, y: this.y + 1 };
-      case Direction.WEST:
-        return { x: this.x - 1, y: this.y };
-    }
-  }
-
-  getLeft() {
-    // make a left turn
-    switch (this.bias) {
-      case Direction.NORTH:
-        return { x: this.x - 1, y: this.y, bias: Direction.WEST };
-      case Direction.EAST:
-        return { x: this.x, y: this.y - 1, bias: Direction.NORTH };
-      case Direction.SOUTH:
-        return { x: this.x + 1, y: this.y, bias: Direction.EAST };
-      case Direction.WEST:
-        return { x: this.x, y: this.y + 1, bias: Direction.SOUTH };
-    }
-  }
-
-  getRight() {
-    // make a right turn
-    switch (this.bias) {
-      case Direction.NORTH:
-        return { x: this.x + 1, y: this.y, bias: Direction.EAST };
-      case Direction.EAST:
-        return { x: this.x, y: this.y + 1, bias: Direction.SOUTH };
-      case Direction.SOUTH:
-        return { x: this.x - 1, y: this.y, bias: Direction.WEST };
-      case Direction.WEST:
-        return { x: this.x, y: this.y - 1, bias: Direction.NORTH };
-    }
-  }
-
   build() {
     let forked = null;
 
@@ -70,7 +29,7 @@ export class Road {
       mustGoStraight || Math.random() < this.directionalBias;
 
     if (continueInBiasedDir) {
-      const { x, y } = this.getForward();
+      const { x, y } = getForward(this.x, this.y, this.bias);
       this.x = x;
       this.y = y;
     } else {
@@ -84,12 +43,12 @@ export class Road {
       // Should we move to the left or the right?
       const moveToLeft = Math.random() > 0.5;
       if (moveToLeft) {
-        const { x, y, bias } = this.getLeft();
+        const { x, y, bias } = getLeft(this.x, this.y, this.bias);
         this.x = x;
         this.y = y;
         this.bias = bias;
       } else {
-        const { x, y, bias } = this.getRight();
+        const { x, y, bias } = getRight(this.x, this.y, this.bias);
         this.x = x;
         this.y = y;
         this.bias = bias;

@@ -12,6 +12,7 @@ export class Road {
     public x: number,
     public y: number,
     public bias: Direction,
+    public managerRef: any,
     public length: number = 0
   ) {
     this.lastDirectionChangeAtLength = this.length;
@@ -37,17 +38,29 @@ export class Road {
       // Should we fork?
       const shouldFork = Math.random() < this.forkChance;
       if (shouldFork) {
-        forked = new Road(this.x, this.y, this.bias, this.length);
+        forked = new Road(
+          this.x,
+          this.y,
+          this.bias,
+          this.managerRef,
+          this.length
+        );
       }
+
+      // Can I move to the left/right?
+      const left = getLeft(this.x, this.y, this.bias);
+      const right = getRight(this.x, this.y, this.bias);
+      const canMoveLeft = !this.managerRef.tileExists(left.x, left.y);
+      const canMoveRight = !this.managerRef.tileExists(right.x, right.y);
 
       // Should we move to the left or the right?
       const moveToLeft = Math.random() > 0.5;
-      if (moveToLeft) {
+      if (moveToLeft && canMoveLeft) {
         const { x, y, bias } = getLeft(this.x, this.y, this.bias);
         this.x = x;
         this.y = y;
         this.bias = bias;
-      } else {
+      } else if (canMoveRight) {
         const { x, y, bias } = getRight(this.x, this.y, this.bias);
         this.x = x;
         this.y = y;

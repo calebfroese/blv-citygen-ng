@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
 
   clickEvent(x: number, y: number) {
     this.generate(
-      Math.floor(x / this.sizeX) - 1 - this.screenTileAmount / 2,
+      Math.floor(x / this.sizeX) - this.screenTileAmount / 2,
       Math.floor(y / this.sizeY) - this.screenTileAmount / 2
     );
   }
